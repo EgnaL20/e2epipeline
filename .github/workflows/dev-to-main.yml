@@ -37,7 +37,7 @@ jobs:
       - name: Install Frontend Dependencies
         working-directory: ./frontend
         run: npm start&
-        
+
       - name: Install End-2-End Dependencies
         working-directory: ./e2e-tests
         run: npm install
@@ -60,8 +60,14 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and Push the backend Docker image
-      run: docker build ./backend -t alange20/e2e_backend:latest | docker push alange20/e2e_backend:latest
+    - name: Build the backend Docker image
+      run: docker build ./backend -t alange20/e2e_backend:latest 
 
-    - name: Build and Push the frontend the Docker image
-      run: docker build ./frontend -t alange20/e2e_frontend:latest | docker push alange20/e2e_frontend:latest
+    - name: Push the backend Docker image to Docker Hub
+      run: docker push alange20/e2e_backend:latest
+
+    - name: Build the frontend the Docker image
+      run: docker build ./frontend -t alange20/e2e_frontend:latest
+
+    - name: Push the frontend Docker image to Docker Hub
+      run: docker push alange20/e2e_frontend:latest
