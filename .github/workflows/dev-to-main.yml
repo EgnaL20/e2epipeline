@@ -6,33 +6,44 @@ on:
       - main
 
 jobs:
-  build_test:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js for Frontend
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20.x'
 
-      - name: Install Frontend Dependencies then run tests
+      - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm install | npm test
+        run: npm install
 
-      - name: Set up Node.js for Backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm test
 
-      - name: Install Backend Dependencies then run tests
+      - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm install | npm test
+        run: npm install
+
+      - name: Run Backend Unit Tests
+        working-directory: ./backend
+        run: npm test
+
+      - name: Install End-2-End Dependencies
+        working-directory: ./e2e-tests
+        run: npm install
+
+      - name: Run End-2-End Unit Tests
+        working-directory: ./e2e-tests
+        run: npm test
 
   build:
-    needs: build_test
+    needs: build_and_test
     runs-on: ubuntu-latest
     if: success()
 
