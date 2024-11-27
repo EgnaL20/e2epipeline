@@ -17,13 +17,21 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install Frontend Dependencies And Run Tests
+      - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm install | npm test
+        run: npm install
 
-      - name: Install Backend Dependencies And Run Tests
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm install |  npm test
+        run: npm install
+
+      - name: Run Backend Unit Tests
+        working-directory: ./backend
+        run: npm test
 
   auto_merge_to_main:
     needs: build_and_test
