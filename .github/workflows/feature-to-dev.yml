@@ -10,12 +10,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js for Frontend
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20.x'
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
@@ -24,11 +24,6 @@ jobs:
       - name: Run Frontend Unit Tests
         working-directory: ./frontend
         run: npm test
-
-      - name: Set up Node.js for Backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
 
       - name: Install Backend Dependencies
         working-directory: ./backend
@@ -45,12 +40,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Merge Dev to Main
-        uses: devmasx/merge-branch@v3
+        uses: devmasx/merge-branch@master
         with:
-          type: merge
-          source_branch: dev
+          type: now
+          from_branch: dev
           target_branch: main
-          commit_message: "Automated merge of dev into main"
+          github_token: ${{ secrets.USER_TOKEN }}

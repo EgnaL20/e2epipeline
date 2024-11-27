@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build_test_deploy:
+  build_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,31 +18,35 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install Frontend Dependencies
+      - name: Install Frontend Dependencies then run tests
         working-directory: ./frontend
-        run: npm install
-
-      - name: Run Frontend Unit Tests
-        working-directory: ./frontend
-        run: npm test
+        run: npm install | npm test
 
       - name: Set up Node.js for Backend
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install Backend Dependencies
+      - name: Install Backend Dependencies then run tests
         working-directory: ./backend
-        run: npm install
+        run: npm install | npm test
 
-      - name: Run Backend Unit Tests
-        working-directory: ./backend
-        run: npm test
+  build:
+    needs: build_test
+    runs-on: ubuntu-latest
+    if: success()
 
-      - name: Build Docker Images
-        run: docker-compose build
+    steps:
+    - uses: actions/checkout@v4
 
-      - name: Push Docker Images to Docker Hub
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker-compose push
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push the backend Docker image
+      run: docker build ./backend -t alange20/e2e_backend:latest | docker push alange20/e2e_backend:latest
+
+    - name: Build and Push the frontend the Docker image
+      run: docker build ./frontend -t alange20/e2e_frontend:latest | docker push alange20/e2e_frontend:latest
