@@ -50,7 +50,7 @@ jobs:
       - name: Merge Dev to Main
         uses: devmasx/merge-branch@master
         with:
-          type: merge
-          source_branch: dev
+          type: now
+          from_branch: dev
           target_branch: main
-          commit_message: "Automated merge of dev into main"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
