@@ -1,0 +1,56 @@
+name: Feature to Dev
+
+on:
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js for Frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Set up Node.js for Backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run Backend Unit Tests
+        working-directory: ./backend
+        run: npm test
+
+  auto_merge_to_main:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Merge Dev to Main
+        uses: devmasx/merge-branch@v3
+        with:
+          type: merge
+          source_branch: dev
+          target_branch: main
+          commit_message: "Automated merge of dev into main"
